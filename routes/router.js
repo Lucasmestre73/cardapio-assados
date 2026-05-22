@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const publicController = require('../controllers/publicController');
 const authController = require('../controllers/authController');
-const adminController = require('../controllers/adminController');
 const pratoController = require('../controllers/pratoController');
 const cardapioDiaController = require('../controllers/cardapioDiaController');
 const { adminRequired, redirectLoggedAdmin } = require('../middlewares/authMiddleware');
@@ -16,7 +15,7 @@ router.get('/admin/login', redirectLoggedAdmin, authController.loginPage);
 router.post('/admin/login', redirectLoggedAdmin, authController.login);
 router.get('/admin/logout', adminRequired, authController.logout);
 
-router.get('/admin', adminRequired, adminController.dashboard);
+router.get('/admin', adminRequired, (req, res) => res.redirect('/admin/cardapio'));
 
 router.get('/admin/pratos', adminRequired, pratoController.index);
 router.get('/admin/pratos/novo', adminRequired, pratoController.novoPage);
