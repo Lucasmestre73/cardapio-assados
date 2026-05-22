@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Assados com Carinho</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/admin-topbar') %>
+  <div class="admin-layout">
+    <%- include('../partials/admin-sidebar') %>
+    <main class="admin-content">
+      <div class="admin-wrap">
+        <%- include('../partials/flash') %>
+        <div class="section-title">
+          <h2>Painel administrativo</h2>
+        </div>
+
+        <section class="stats">
+          <div class="stat">
+            Total de pratos
+            <strong><%= totalPratos %></strong>
+          </div>
+          <div class="stat">
+            Pratos ativos
+            <strong><%= pratosAtivos %></strong>
+          </div>
+          <div class="stat">
+            Itens no cardapio de hoje
+            <strong><%= totalItensHoje %></strong>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

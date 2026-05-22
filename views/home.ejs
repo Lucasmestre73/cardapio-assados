@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assados com Carinho</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <a class="admin-link public-actions" href="/admin/login">Admin</a>
+
+  <section class="site-hero">
+    <div class="hero-content">
+      <h1>Assados com Carinho</h1>
+      <p>Cardapio do dia com carnes, acompanhamentos e pratos preparados para servir bem.</p>
+    </div>
+  </section>
+
+  <main class="container">
+    <div class="section-title">
+      <h2>Disponiveis hoje</h2>
+      <span class="muted"><%= new Date().toLocaleDateString('pt-BR') %></span>
+    </div>
+
+    <% if (!itens.length) { %>
+      <div class="empty">O cardapio de hoje ainda nao foi montado.</div>
+    <% } %>
+
+    <section class="grid">
+      <% itens.forEach(function(item) { %>
+        <article class="dish-card">
+          <% if (item.prato.imagem) { %>
+            <img src="<%= item.prato.imagem %>" alt="<%= item.prato.nome %>">
+          <% } else { %>
+            <div class="image-placeholder">Sem imagem</div>
+          <% } %>
+          <div class="dish-card-content">
+            <h3><%= item.prato.nome %></h3>
+            <p><%= item.prato.descricao %></p>
+            <p><strong>Preparo:</strong> <%= item.prato.modoPreparo %></p>
+            <% if (item.observacao) { %>
+              <p><strong>Obs.:</strong> <%= item.observacao %></p>
+            <% } %>
+            <div class="meta">
+              <span class="pill"><%= item.prato.categoria %></span>
+              <span class="pill"><%= tipoVendaLabel[item.tipoVenda] %></span>
+              <span class="pill <%= item.disponivel ? 'status-ok' : 'status-off' %>">
+                <%= item.disponivel ? 'disponivel' : 'indisponivel' %>
+              </span>
+            </div>
+            <div class="price">R$ <%= formatMoney(item.preco) %></div>
+          </div>
+        </article>
+      <% }) %>
+    </section>
+  </main>
+</body>
+</html>

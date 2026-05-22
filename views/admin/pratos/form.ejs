@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= prato ? 'Editar prato' : 'Novo prato' %> | Assados com Carinho</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../../partials/admin-topbar') %>
+  <div class="admin-layout">
+    <%- include('../../partials/admin-sidebar') %>
+    <main class="admin-content">
+      <div class="admin-wrap">
+        <%- include('../../partials/flash') %>
+
+        <div class="section-title">
+          <h2><%= prato ? 'Editar prato' : 'Novo prato' %></h2>
+          <a class="btn-secondary" href="/admin/pratos">Voltar</a>
+        </div>
+
+        <section class="panel">
+          <form class="form-grid" action="<%= action %>" method="post" enctype="multipart/form-data">
+            <label class="full" for="nome">
+              Nome do prato
+              <input type="text" id="nome" name="nome" value="<%= prato ? prato.nome : '' %>" required>
+            </label>
+
+            <label class="full" for="descricao">
+              Descricao
+              <textarea id="descricao" name="descricao" required><%= prato ? prato.descricao : '' %></textarea>
+            </label>
+
+            <label class="full" for="modoPreparo">
+              Modo de preparo
+              <textarea id="modoPreparo" name="modoPreparo" required><%= prato ? prato.modoPreparo : '' %></textarea>
+            </label>
+
+            <label for="categoria">
+              Categoria
+              <select id="categoria" name="categoria" required>
+                <% ['carnes', 'acompanhamentos', 'bebidas', 'sobremesas', 'outro'].forEach(function(categoria) { %>
+                  <option value="<%= categoria %>" <%= prato && prato.categoria === categoria ? 'selected' : '' %>><%= categoria %></option>
+                <% }) %>
+              </select>
+            </label>
+
+            <label for="tipoVendaPadrao">
+              Tipo de venda padrao
+              <select id="tipoVendaPadrao" name="tipoVendaPadrao" required>
+                <% ['kg', 'unidade', 'porcao', 'marmita', 'outro'].forEach(function(tipo) { %>
+                  <option value="<%= tipo %>" <%= prato && prato.tipoVendaPadrao === tipo ? 'selected' : '' %>><%= tipoVendaLabel[tipo] %></option>
+                <% }) %>
+              </select>
+            </label>
+
+            <label for="precoPadrao">
+              Preco padrao
+              <input type="number" id="precoPadrao" name="precoPadrao" min="0" step="0.01" value="<%= prato ? prato.precoPadrao : '' %>" required>
+            </label>
+
+            <label for="imagem">
+              Imagem
+              <input type="file" id="imagem" name="imagem" accept="image/*">
+            </label>
+
+            <% if (prato && prato.imagem) { %>
+              <div>
+                <span class="muted">Imagem atual</span><br>
+                <img class="thumb" src="<%= prato.imagem %>" alt="<%= prato.nome %>">
+              </div>
+            <% } %>
+
+            <label class="checkbox-row full">
+              <input type="checkbox" name="ativo" <%= !prato || prato.ativo ? 'checked' : '' %>>
+              Ativo
+            </label>
+
+            <div class="form-actions full">
+              <button class="btn" type="submit">Salvar</button>
+              <a class="btn-secondary" href="/admin/pratos">Cancelar</a>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

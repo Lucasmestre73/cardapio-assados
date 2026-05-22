@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pratos | Assados com Carinho</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../../partials/admin-topbar') %>
+  <div class="admin-layout">
+    <%- include('../../partials/admin-sidebar') %>
+    <main class="admin-content">
+      <div class="admin-wrap">
+        <%- include('../../partials/flash') %>
+
+        <div class="section-title">
+          <h2>Pratos cadastrados</h2>
+          <a class="btn" href="/admin/pratos/novo">Novo prato</a>
+        </div>
+
+        <section class="panel">
+          <form class="search-row" action="/admin/pratos" method="get">
+            <input type="search" name="busca" value="<%= busca %>" placeholder="Buscar prato">
+            <button class="btn-secondary" type="submit">Buscar</button>
+            <a class="btn-secondary" href="/admin/pratos">Limpar</a>
+          </form>
+        </section>
+
+        <section class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Imagem</th>
+                <th>Prato</th>
+                <th>Categoria</th>
+                <th>Venda padrao</th>
+                <th>Preco</th>
+                <th>Status</th>
+                <th>Acoes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (!pratos.length) { %>
+                <tr>
+                  <td colspan="7">Nenhum prato cadastrado.</td>
+                </tr>
+              <% } %>
+
+              <% pratos.forEach(function(prato) { %>
+                <tr>
+                  <td>
+                    <% if (prato.imagem) { %>
+                      <img class="thumb" src="<%= prato.imagem %>" alt="<%= prato.nome %>">
+                    <% } else { %>
+                      <div class="thumb"></div>
+                    <% } %>
+                  </td>
+                  <td>
+                    <strong><%= prato.nome %></strong><br>
+                    <span class="muted"><%= prato.descricao %></span>
+                  </td>
+                  <td><%= prato.categoria %></td>
+                  <td><%= tipoVendaLabel[prato.tipoVendaPadrao] %></td>
+                  <td>R$ <%= formatMoney(prato.precoPadrao) %></td>
+                  <td class="<%= prato.ativo ? 'status-ok' : 'status-off' %>">
+                    <%= prato.ativo ? 'ativo' : 'inativo' %>
+                  </td>
+                  <td>
+                    <div class="row-actions">
+                      <a class="btn-secondary btn-small" href="/admin/pratos/editar/<%= prato._id %>">Editar</a>
+                      <form action="/admin/pratos/excluir/<%= prato._id %>" method="post">
+                        <button class="btn-danger btn-small" type="submit">Excluir</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

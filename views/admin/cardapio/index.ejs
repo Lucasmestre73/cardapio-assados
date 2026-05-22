@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardapio do dia | Assados com Carinho</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../../partials/admin-topbar') %>
+  <div class="admin-layout">
+    <%- include('../../partials/admin-sidebar') %>
+    <main class="admin-content">
+      <div class="admin-wrap">
+        <%- include('../../partials/flash') %>
+
+        <div class="section-title">
+          <div>
+            <h2>Montar cardapio do dia</h2>
+            <span class="muted"><%= new Date(cardapio.data).toLocaleDateString('pt-BR') %></span>
+          </div>
+        </div>
+
+        <section class="cardapio-admin-grid">
+          <div class="panel">
+            <h2>Buscar pratos</h2>
+            <form class="search-row" action="/admin/cardapio" method="get">
+              <input type="search" name="busca" value="<%= busca %>" placeholder="Nome do prato">
+              <button class="btn-secondary" type="submit">Buscar</button>
+              <a class="btn-secondary" href="/admin/cardapio">Limpar</a>
+            </form>
+
+            <div>
+              <% if (!pratos.length) { %>
+                <div class="empty">Nenhum prato ativo encontrado.</div>
+              <% } %>
+
+              <% pratos.forEach(function(prato) { %>
+                <article class="candidate">
+                  <h3><%= prato.nome %></h3>
+                  <span class="muted"><%= prato.categoria %> | R$ <%= formatMoney(prato.precoPadrao) %> / <%= tipoVendaLabel[prato.tipoVendaPadrao] %></span>
+                  <form action="/admin/cardapio/adicionar" method="post">
+                    <input type="hidden" name="pratoId" value="<%= prato._id %>">
+                    <button class="btn btn-small" type="submit">Adicionar ao cardapio</button>
+                  </form>
+                </article>
+              <% }) %>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Itens de hoje</h2>
+
+            <% if (!cardapio.itens.length) { %>
+              <div class="empty">Nenhum prato no cardapio do dia.</div>
+            <% } %>
+
+            <% cardapio.itens.forEach(function(item) { %>
+              <% if (item.prato) { %>
+                <article class="today-item">
+                  <% if (item.prato.imagem) { %>
+                    <img src="<%= item.prato.imagem %>" alt="<%= item.prato.nome %>">
+                  <% } else { %>
+                    <div class="image-placeholder">Sem imagem</div>
+                  <% } %>
+
+                  <div>
+                    <h3><%= item.prato.nome %></h3>
+                    <p class="muted"><%= item.prato.descricao %></p>
+
+                    <form class="form-grid" action="/admin/cardapio/editar-item/<%= item._id %>" method="post">
+                      <label for="preco-<%= item._id %>">
+                        Preco do dia
+                        <input type="number" id="preco-<%= item._id %>" name="preco" min="0" step="0.01" value="<%= item.preco %>" required>
+                      </label>
+
+                      <label for="tipoVenda-<%= item._id %>">
+                        Tipo de venda do dia
+                        <select id="tipoVenda-<%= item._id %>" name="tipoVenda" required>
+                          <% ['kg', 'unidade', 'porcao', 'marmita', 'outro'].forEach(function(tipo) { %>
+                            <option value="<%= tipo %>" <%= item.tipoVenda === tipo ? 'selected' : '' %>><%= tipoVendaLabel[tipo] %></option>
+                          <% }) %>
+                        </select>
+                      </label>
+
+                      <label class="full" for="observacao-<%= item._id %>">
+                        Observacao
+                        <input type="text" id="observacao-<%= item._id %>" name="observacao" value="<%= item.observacao %>" placeholder="Opcional">
+                      </label>
+
+                      <label class="checkbox-row full">
+                        <input type="checkbox" name="disponivel" <%= item.disponivel ? 'checked' : '' %>>
+                        Disponivel
+                      </label>
+
+                      <div class="form-actions full">
+                        <button class="btn btn-small" type="submit">Salvar item</button>
+                      </div>
+                    </form>
+
+                    <form action="/admin/cardapio/remover-item/<%= item._id %>" method="post">
+                      <button class="btn-danger btn-small" type="submit">Remover do dia</button>
+                    </form>
+                  </div>
+                </article>
+              <% } %>
+            <% }) %>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
