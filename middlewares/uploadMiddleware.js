@@ -1,12 +1,19 @@
 const multer = require('multer');
-const path = require('path');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.resolve(__dirname, '..', 'uploads')),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const name = `${Date.now()}-${Math.round(Math.random() * 1E9)}${ext}`;
-    cb(null, name);
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'cardapio-assados',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 1200, height: 900, crop: 'limit', quality: 'auto' }]
   }
 });
 
@@ -20,6 +27,11 @@ const upload = multer({
 });
 
 module.exports = (req, res, next) => {
+  if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+    req.flash('errors', 'Cloudinary nao configurado');
+    return res.redirect(req.originalUrl);
+  }
+
   upload.single('imagem')(req, res, (error) => {
     if (error) {
       req.flash('errors', error.message);

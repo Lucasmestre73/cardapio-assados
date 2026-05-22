@@ -5,7 +5,7 @@ function normalizarPrato(body, file, imagemAtual = '') {
     nome: String(body.nome || '').trim(),
     descricao: String(body.descricao || '').trim(),
     modoPreparo: String(body.modoPreparo || '').trim(),
-    imagem: file ? `/uploads/${file.filename}` : imagemAtual,
+    imagem: file ? file.path : imagemAtual,
     categoria: body.categoria,
     tipoVendaPadrao: body.tipoVendaPadrao,
     precoPadrao: Number(String(body.precoPadrao || '').replace(',', '.')),
